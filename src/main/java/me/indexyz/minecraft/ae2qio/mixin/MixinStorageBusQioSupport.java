@@ -13,8 +13,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(StorageBusPart.class)
 public class MixinStorageBusQioSupport {
-    @Inject(method = "getInventoryWrapper(Lnet/minecraft/tileentity/TileEntity;)Lappeng/api/storage/IMEInventory", at = @At("TAIL"), cancellable = true)
-    private void init(TileEntity target, CallbackInfoReturnable<IMEInventory<IAEItemStack>> info) {
+    @Inject(method = "getInventoryWrapper", at = @At("TAIL"), cancellable = true, remap = false)
+    private void getInventoryWrapper(TileEntity target, CallbackInfoReturnable<IMEInventory<IAEItemStack>> info) {
         if (target instanceof TileEntityQIODashboard) {
             var dashboard = (TileEntityQIODashboard) target;
             var adapter = new QioStorageAdapter<>(dashboard, ((StorageBusPart)(Object)this).getSide().getFacing().getOpposite());

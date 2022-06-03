@@ -127,11 +127,6 @@ public class QioStorageAdapter<DASHBOARD extends TileEntityMekanism & IQIOFreque
 
     @Override
     public TickRateModulation onTick() {
-        var items = this.update();
-        if (items == null) {
-            return TickRateModulation.SLOWER;
-        }
-
         final Iterator<Map.Entry<IMEMonitorHandlerReceiver<IAEItemStack>, Object>> i = this.listeners.entrySet()
                 .iterator();
 
@@ -139,7 +134,7 @@ public class QioStorageAdapter<DASHBOARD extends TileEntityMekanism & IQIOFreque
             final Map.Entry<IMEMonitorHandlerReceiver<IAEItemStack>, Object> l = i.next();
             final IMEMonitorHandlerReceiver<IAEItemStack> key = l.getKey();
             if (key.isValid(l.getValue())) {
-                key.postChange(this, items, this.actionSource);
+                key.postChange(this, new ArrayList<>(), this.actionSource);
             } else {
                 i.remove();
             }
@@ -154,29 +149,21 @@ public class QioStorageAdapter<DASHBOARD extends TileEntityMekanism & IQIOFreque
         this.actionSource = mySource;
     }
 
-    private ArrayList<IAEItemStack> cachedAeStacks = new ArrayList<IAEItemStack>();
-
     @Override
     public IItemList<IAEItemStack> getAvailableItems(IItemList<IAEItemStack> out) {
-        this.cachedAeStacks.forEach((out::add));
-        return out;
-    }
-
-    private List<IAEItemStack> update() {
         var frequency = this.getFrequency();
         if (frequency == null) {
             return null;
         }
 
-        final var items = new ArrayList<IAEItemStack>();
         frequency.getItemDataMap().forEach(((hashedItem, qioItemTypeData) -> {
             var stack = AEItemStack.fromItemStack(hashedItem.getStack());
+            assert stack != null;
             stack.setStackSize(qioItemTypeData.getCount());
 
-            items.add(stack);
+            out.add(stack);
         }));
 
-        this.cachedAeStacks = items;
-        return items;
+        return out;
     }
 }

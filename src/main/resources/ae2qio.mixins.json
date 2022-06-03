@@ -2,7 +2,7 @@
   "required": true,
   "package": "me.indexyz.minecraft.ae2qio.mixin",
   "compatibilityLevel": "JAVA_11",
-  "refmap": "ae2qio.refmap.json",
+  "refmap": "mixins.ae2qio.refmap.json",
   "mixins": [
     "MixinStorageBusQioSupport"
   ],
